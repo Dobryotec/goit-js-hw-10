@@ -12,20 +12,23 @@ input.addEventListener('input', debounce(onInputClick, DEBOUNCE_DELAY));
 function onInputClick(e) {
   e.preventDefault();
   let query = e.target.value.trim();
-  fetchCountries(query)
-    .then(countries => {
-      if (countries.length > 10) {
-        Notiflix.Notify.info(
-          'Too many matches found. Please enter a more specific name.'
-        );
-      } else if (countries.length >= 2 && countries.length <= 10) {
-        return createMarkupList(countries);
-      } else if (countries.length === 1) {
-        return createMarkup(countries);
-      }
-    })
-    .catch(onFetchError)
-    .finally(() => (query = ''));
+  if (query === '') {
+    clear();
+  } else {
+    fetchCountries(query)
+      .then(countries => {
+        if (countries.length > 10) {
+          Notiflix.Notify.info(
+            'Too many matches found. Please enter a more specific name.'
+          );
+        } else if (countries.length >= 2 && countries.length <= 10) {
+          return createMarkupList(countries);
+        } else if (countries.length === 1) {
+          return createMarkup(countries);
+        }
+      })
+      .catch(onFetchError);
+  }
 }
 
 function createMarkup(countries) {
